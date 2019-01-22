@@ -31,8 +31,9 @@ while True:
     	continue
     #conn.send(data+b' recv')
     serial.write(str.encode(chr(data[0])))
-    print(data[0])
-    print(Motion[data[0]])
+    if data[0] == 57:
+        continue
+    #print(Motion[data[0]])
     state = data[0]
 
 conn.close()
