@@ -5,6 +5,7 @@ from pynput import keyboard
 RETURN_CHAR = 'r'
 #BUTTONS
 FORWARD_LED = 'l'
+SIGNAL_KEY = 'p'
 FORWARD_KEY = 'w'
 BACKWARD_KEY = 's'
 LEFT_KEY = 'a'
@@ -25,6 +26,11 @@ States  = {
 		"b_right" : b'8',
 }
 
+
+Commands = {
+	"lights" : b'9',
+	"signal" : b':',
+}
 
 class Client:
 	
@@ -109,8 +115,11 @@ class Client:
 		if state != self.state:
 			self.socket.send(States[self.state])
 		
-		if key == FORWARD_LED:
-			self.socket.send(b'9')
+		elif key == FORWARD_LED:
+			self.socket.send(Commands["lights"])
+		elif key == SIGNAL_KEY:
+			self.socket.send(Commands["signal"])
+
 
 sender = Client()
 
