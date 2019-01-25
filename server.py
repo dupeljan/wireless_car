@@ -4,6 +4,7 @@ import pygame
 from multiprocessing import Process
 import subprocess
 from sound import play_wav
+import struct
 
 bark = "sound4.wav"
 
@@ -36,24 +37,20 @@ Commands  = {
         57 : "lights",
         58 : "signal",
 }
-state = 48
-not_motions = (57,58)
+
 while True:
     data = conn.recv(1024)
     
     if not data:
         break
 
-    if  data[0] != state:
-        #conn.send(data+b' recv')
-        serial.write(str.encode(chr(data[0])))
+    
+    #conn.send(data+b' recv')
+    serial.write(struct.pack('>B', data[0] ))
         
-        if Commands[data[0]] == "signal":
-            #play()
-            Process(target=play,args=(bark,)).start()
+    if Commands[data[0]] == "signal":
+        #play()
+        Process(target=play,args=(bark,)).start()
 
-        if not data[0] in not_motions:
-            #print(Commands[data[0]])
-            state = data[0]
 
 conn.close()

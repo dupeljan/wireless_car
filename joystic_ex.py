@@ -77,7 +77,7 @@ while done==False:
     
     # For each joystick:
     for i in range(joystick_count):
-        joystick = pygame.joystick.Joystick(1) ##########
+        joystick = pygame.joystick.Joystick(i) 
         joystick.init()
     
         textPrint.print(screen, "Joystick {}".format(i) )

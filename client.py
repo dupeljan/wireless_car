@@ -1,5 +1,6 @@
 import socket
 from pynput import keyboard
+import struct
 
 
 RETURN_CHAR = 'r'
@@ -26,6 +27,14 @@ States  = {
 		"b_right" : b'8',
 }
 
+tr_commands = {
+	"stop" : 48,
+	"forward" : 49,
+	"backward" : 50,
+	"left" : 51,
+	"right" : 52,
+	"straight" : 53 
+} 
 
 Commands = {
 	"lights" : b'9',
@@ -42,6 +51,30 @@ class Client:
 	def receive(self):
 		data = self.socket.recv(1024)
 		print(' receve ', data)
+
+	def translate_send(self,state):
+		
+		if state == "stop":
+			arg = (tr_commands["stop"],tr_commands["straight"])
+		elif state == "forward":
+			arg = (tr_commands["forward"],tr_commands["straight"])
+		elif state == "backward":
+			arg = (tr_commands["backward"],tr_commands["straight"])
+		elif state == "left":
+			arg = (tr_commands["stop"],tr_commands["left"])
+		elif state == "right":
+			arg = (tr_commands["stop"],tr_commands["right"])
+		elif state == "f_left":
+			arg = (tr_commands["forward"],tr_commands["left"])
+		elif state == "f_right":
+			arg = (tr_commands["forward"],tr_commands["right"])
+		elif state == "b_left":
+			arg = (tr_commands["backward"],tr_commands["left"])
+		elif state == "b_right":
+			arg = (tr_commands["backward"],tr_commands["right"])
+
+		for i in range(2):
+			self.socket.send(struct.pack('>B', arg[i] ) )
 
 	def send(self,key):
 		state = self.state
@@ -113,7 +146,7 @@ class Client:
 				self.state = "backward"
 		
 		if state != self.state:
-			self.socket.send(States[self.state])
+			self.translate_send(self.state)
 		
 		elif key == FORWARD_LED:
 			self.socket.send(Commands["lights"])

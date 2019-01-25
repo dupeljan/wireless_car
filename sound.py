@@ -56,8 +56,8 @@ def play_wav(file_name):
 		    channels = self.f.getnchannels(),  
 		    rate = self.f.getframerate(),  
 		    output = True)  
-		'''
-		'''
+	'''
+	'''
 		#stop stream  
 		self.stream.stop_stream()  
 		self.stream.stop_stream()  
@@ -65,4 +65,4 @@ def play_wav(file_name):
 
 		#close PyAudio  
 		self.p.terminate()  
-		'''
+	'''
