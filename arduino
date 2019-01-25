@@ -1,0 +1,142 @@
+#define ENA 3
+#define IN1 4
+#define IN2 5
+#define IN3 6
+#define IN4 7
+#define F_LED A5
+#define OUT(I1,I2,I3,I4)\
+      digitalWrite(IN1,I1);\
+      digitalWrite(IN2,I2);\
+      digitalWrite(IN3,I3);\
+      digitalWrite(IN4,I4);
+/*
+enum Direction{
+  stop,
+  forward,
+  backward,
+  left,
+  right, 
+  f_left,
+  f_right,
+  b_left,
+  b_right
+};
+  */ 
+  
+bool f_led = false;  
+
+void setup() {
+  // put your setup code here, to run once:
+  pinMode(ENA,OUTPUT);
+  pinMode(IN1,OUTPUT);
+  pinMode(IN2,OUTPUT);
+  pinMode(IN3,OUTPUT);
+  pinMode(IN4,OUTPUT);
+  pinMode(F_LED,OUTPUT);
+  
+  Serial.begin(9600);
+  
+  digitalWrite(ENA,100);
+}
+
+/*
+void move(Direction d){
+  switch (d){
+    case stop: 
+      OUT(LOW,LOW,LOW,LOW);
+    break;
+    case forward: 
+      OUT(HIGH,LOW,LOW,LOW);
+    break;
+    case backward:
+      OUT(LOW,HIGH,LOW,LOW); 
+    break;
+    case left: 
+      OUT(LOW,LOW,HIGH,LOW);
+    break;
+    case right: 
+      OUT(LOW,LOW,LOW,HIGH);
+    break;
+    case f_left: 
+      OUT(HIGH,LOW,HIGH,LOW);
+    break;    
+    case f_right: 
+      OUT(HIGH,LOW,LOW,HIGH);
+    break;
+    case b_left: 
+      OUT(LOW,HIGH,HIGH,LOW);
+    break;
+    case b_right:
+      OUT(LOW,HIGH,LOW,HIGH);
+    break;
+  }
+}
+*/
+void loop() {
+  byte x;
+  if(Serial.available() ) {
+      switch (Serial.read()){
+      case 10: // ext_forward
+        x = Serial.read();
+        Serial.println(x);
+        //digitalWrite(ENA,x);
+        OUT(LOW,HIGH,LOW,LOW);
+      break;
+      case 11 : // ext_f_left
+       // digitalWrite(ENA,Serial.read());
+        OUT(LOW,HIGH,HIGH,LOW);
+      break;
+      case 12 : // ext_f_right
+        //digitalWrite(ENA,Serial.read());
+        OUT(LOW,HIGH,HIGH,LOW);
+      break;
+      case 20 : // ext_backward
+        //digitalWrite(ENA,Serial.read());
+        OUT(HIGH,LOW,LOW,LOW);
+      break;
+      case 21 : // ext_b_left
+         //digitalWrite(ENA,Serial.read());
+         OUT(HIGH,LOW,HIGH,LOW);
+      break;
+      case 22 : // ext_b_right
+         //digitalWrite(ENA,Serial.read());
+         OUT(HIGH,LOW,LOW,HIGH);
+      break;
+      case 48: // Stop
+        OUT(LOW,LOW,LOW,LOW);
+      break;
+      case 49: // Forward
+        OUT(LOW,HIGH,LOW,LOW);
+      break;  
+      case 50: // Backward
+        OUT(HIGH,LOW,LOW,LOW); 
+      break;
+      case 51: // Left
+        OUT(LOW,LOW,HIGH,LOW);
+      break;
+      case 52: // Right
+        OUT(LOW,LOW,LOW,HIGH);
+      break;
+      case 53: //f_left
+        OUT(LOW,HIGH,HIGH,LOW);
+      break;    
+      case 54: // f_right
+        OUT(LOW,HIGH,LOW,HIGH);
+      break;
+      case 55: //b_left 
+        OUT(HIGH,LOW,HIGH,LOW);
+      break;
+      case 56: //b_right
+        OUT(HIGH,LOW,LOW,HIGH);
+      break;
+      case 57: // Forward led on/off
+        if (f_led)
+          digitalWrite(F_LED,LOW);
+        else
+          digitalWrite(F_LED,HIGH);
+        f_led = !f_led;
+      break;
+     }
+  }
+  
+}
