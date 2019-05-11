@@ -4,6 +4,7 @@ import pygame
 from multiprocessing import Process
 import subprocess
 from sound import play_wav
+import struct
 
 bark = "sound4.wav"
 
@@ -24,36 +25,23 @@ serial = s.Serial("/dev/ttyUSB0",9600)
 
 print ('connected:', addr )
 Commands  = {
-		48 : "stop" ,
-		49 : "forward",
-		50 : "backward",
-		51 : "left",
-		52 : "right", 
-		53 : "f_left",
-		54 : "f_right",
-		55 : "b_left",
-		56 : "b_right",
-        57 : "lights",
-        58 : "signal",
+
+        54 : "signal",
 }
-state = 48
-not_motions = (57,58)
+
 while True:
     data = conn.recv(1024)
     
     if not data:
         break
 
-    if  data[0] != state:
-        #conn.send(data+b' recv')
-        serial.write(str.encode(chr(data[0])))
+    
+    #conn.send(data+b' recv')
+    serial.write(struct.pack('>B', data[0] ))
         
-        if Commands[data[0]] == "signal":
-            #play()
-            Process(target=play,args=(bark,)).start()
+    if Commands[data[0]] == "signal":
+        #play()
+        Process(target=play,args=(bark,)).start()
 
-        if not data[0] in not_motions:
-            #print(Commands[data[0]])
-            state = data[0]
 
 conn.close()

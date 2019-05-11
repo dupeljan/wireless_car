@@ -1,67 +1,66 @@
 import pygame 
-import socket
+import os 
 
-States  = {
-		"stop" : b'0',
-		"forward" : b'1',
-		"backward" : b'2',
-		"left" : b'3',
-		"right" : b'4', 
-		"f_left" : b'5',
-		"f_right" : b'6',
-		"b_left" : b'7',
-		"b_right" : b'8',
+commands  = {
+		"stop" : 48,
+		"forward" : 49,
+		"backward" : 50,
+		"left" : 51,
+		"right" : 52, 
+		"straight" : 53,
+		"lights"  : 57
 }
 
-class Client:
-	
-	def __init__(self, address='192.168.1.39', port=7777):
-		self.state = "stop"
-		self.socket = socket.socket()
-		self.socket.connect((address, port))
-
-	def send(self,state):
-		self.socket.send(States[state])
-
 class Dualshock_handler:
-	def __init__(self):
-		self.sender = Client()
+	'''Dualshock handler class.
+	   class Client must have method send:
+	'''
+	def __init__(self,Client):
+		self.sender = Client
 		pygame.init()
 		pygame.joystick.init()
+		os.putenv('SDL_VIDEODRIVER', 'fbcon')
+		pygame.display.init()
+		#pygame.display.set_mode((1, 1))
 		self.joystick = pygame.joystick.Joystick(0)
 		self.joystick.init()
+		# Used to manage how fast the screen updates
+		self.clock = pygame.time.Clock()
 
 	def handle(self):
 		clock = pygame.time.Clock()
 		while True:
 			for event in pygame.event.get(): # User did something
 		        # Possible joystick actions: JOYAXISMOTION JOYBALLMOTION JOYBUTTONDOWN JOYBUTTONUP JOYHATMOTION
-				if event.type == pygame.JOYHATMOTION:
-					hat = self.joystick.get_hat( 0 )
-					if hat == (0,1):
-						self.sender.send("forward")
-					elif hat == (0,-1):
-						self.sender.send("backward")
-					elif hat == (-1,0):
-						self.sender.send("left")
-					elif hat == (1,0):
-						self.sender.send("right")
-					elif hat == (-1,1):
-						self.sender.send("f_left")
-					elif hat == (1,1):
-						self.sender.send("f_right")
-					elif hat == (-1,-1):
-						self.sender.send("b_left")
-					elif hat == (1,-1):
-						self.sender.send("b_right")
-					elif hat == (0,0):
-						self.sender.send("stop")
+				if event.type == pygame.JOYAXISMOTION:
+					'''
+					Axis 4 - R2
+					Axis 3 - L2
+					Button 4 - L1
+					Button 5 - L2
+					'''
+					speed = round( ( self.joystick.get_axis(4) - self.joystick.get_axis(3) ) * 48.5 )
+					print("speed ",speed)
+					if speed == 0:
+						self.sender.send(commands["stop"])
+					elif speed > 0:
+						self.sender.send(speed + 60)
+					else:
+						self.sender.send(-speed+158)
 
-			clock.tick(20)
+					rotation = self.joystick.get_axis(0)
+					if rotation > 0.5:
+						self.sender.send(commands["right"])
+					elif rotation < -0.5:
+						self.sender.send(commands["left"])
+					else:
+						self.sender.send(commands["straight"])
 
-def main():
-	joystick = Dualshock_handler()
-	joystick.handle()
-
-if __name__ == '__main__':
-		main()	
+					
+					
+				if event.type == pygame.JOYBUTTONDOWN:
+					if self.joystick.get_button(4) or self.joystick.get_button(5):
+						self.sender.send(commands["lights"])
+					
+			#time.sleep(0.3)
+			#self.clock.tick(20)
