@@ -37,8 +37,8 @@ tr_commands = {
 } 
 
 Commands = {
-	"lights" : b'9',
-	"signal" : b':',
+	"lights" : 57,
+	"signal" : 54,
 }
 
 class Client:
@@ -149,9 +149,9 @@ class Client:
 			self.translate_send(self.state)
 		
 		elif key == FORWARD_LED:
-			self.socket.send(Commands["lights"])
+			self.socket.send(struct.pack('>B', Commands["lights"] ))
 		elif key == SIGNAL_KEY:
-			self.socket.send(Commands["signal"])
+			self.socket.send(struct.pack('>B', Commands["signal"]) )
 
 
 sender = Client()

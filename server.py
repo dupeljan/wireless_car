@@ -25,17 +25,8 @@ serial = s.Serial("/dev/ttyUSB0",9600)
 
 print ('connected:', addr )
 Commands  = {
-		48 : "stop" ,
-		49 : "forward",
-		50 : "backward",
-		51 : "left",
-		52 : "right", 
-		53 : "f_left",
-		54 : "f_right",
-		55 : "b_left",
-		56 : "b_right",
-        57 : "lights",
-        58 : "signal",
+
+        54 : "signal",
 }
 
 while True:
