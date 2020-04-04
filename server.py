@@ -39,9 +39,9 @@ while True:
     #conn.send(data+b' recv')
     serial.write(struct.pack('>B', data[0] ))
         
-    if Commands[data[0]] == "signal":
+    #if Commands[data[0]] == "signal":
         #play()
-        Process(target=play,args=(bark,)).start()
+       # Process(target=play,args=(bark,)).start()
 
 
 conn.close()
